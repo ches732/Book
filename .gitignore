@@ -1,3 +1,5 @@
 .idea/
-booksite\book\__pycache__
-booksite\db.sqlite3
+
+booksite/book/__pycache__/
+
+booksite/db.sqlite3

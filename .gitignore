@@ -1,5 +1,5 @@
-.idea/
+.idea
 
-booksite/book/__pycache__/
+__pycache__
 
-booksite/db.sqlite3
+db.sqlite3

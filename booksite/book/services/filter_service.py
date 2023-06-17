@@ -6,11 +6,14 @@ def get_filter_by_title(book, title):
 
 
 def get_filter_by_author(book, authors):
-    return book.filter(authors=authors)
+    return book.filter(authors__first_name__in=authors.split(", "),
+                       authors__last_name__in=authors.split(", "),
+                       authors__date_of_birth__in=authors.split(", "),
+                       authors__date_of_death__in=authors.split(", "))
 
 
 def get_filter_by_genre(book, genres):
-    return book.filter(genres=genres)
+    return book.filter(genres__first_name__in=genres.split(", "))
 
 
 def get_filter_by_price(book, price, operator=None):

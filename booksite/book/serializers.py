@@ -24,8 +24,8 @@ class BookInputSerializer(serializers.ModelSerializer):
 
 
 class BookSerializer(serializers.ModelSerializer):
-    authors = AuthorSerializer(many=True, read_only=True)
-    genres = GenreSerializer(many=True, read_only=True)
+    authors = AuthorSerializer(many=True)
+    genres = GenreSerializer(many=True)
 
     class Meta:
         model = Book

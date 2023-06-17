@@ -4,12 +4,12 @@ from django.db import models
 class Author(models.Model):
     """Author - Автор
 
-        Атрибуты:
-            first_name: Имя автора
-            last_name: Фамилия автора
-            date_of_birth: Дата рождения
-            date_of_death: Дата смерти
-        """
+    Атрибуты:
+        first_name: Имя автора
+        last_name: Фамилия автора
+        date_of_birth: Дата рождения
+        date_of_death: Дата смерти
+    """
 
     first_name = models.CharField(max_length=50, blank=True, null=True, default=None)
     last_name = models.CharField(max_length=50, blank=True, null=True, default=None)
@@ -23,23 +23,23 @@ class Author(models.Model):
 class Genre(models.Model):
     """Genre - Жанр
 
-            Атрибут:
-               genre: Жанр
-            """
+    Атрибут:
+        name: Жанр
+    """
 
-    genre = models.CharField(max_length=100, blank=True, null=True, default=None)
+    name = models.CharField(max_length=100, blank=True, null=True, default=None)
 
     def __str__(self):
-        return self.genre
+        return self.name
 
 
 class Book(models.Model):
-    """Book - Опрос
+    """Book - Книга
 
     Атрибуты:
         title: Заголовок книги
-        author: Автор книги
-        genre: Жанр книги
+        authors: Авторы книги
+        genres: Жанры книги
         price: Цена книги
         release_year: Год выпуска книги
     """

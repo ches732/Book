@@ -10,7 +10,7 @@ def get_all_books():
 
 
 def create_book(book: OrderedDict):
-    """Создание запроса"""
+    """Создание книги"""
 
     genres = book.get("genres")
     authors = book.get("authors")
@@ -47,7 +47,7 @@ def add_genres(book: Book, genres: List[Dict[str, str]]):
 
 @transaction.atomic()
 def update_book(book: OrderedDict, id: int) -> Book:
-    """Обновление запроса"""
+    """Обновление книги"""
 
     genres = book.pop("genres")
     authors = book.pop("authors")
@@ -57,7 +57,6 @@ def update_book(book: OrderedDict, id: int) -> Book:
     queryset.update(**book)
     update_authors(queryset[0], authors, id)
     update_genres(queryset[0], genres, id)
-    print(queryset)
     return queryset[0]
 
 
@@ -78,7 +77,7 @@ def update_genres(book: Book, genres: List[Dict[str, str]], id: int):
 
 
 def delete_book(id: int):
-    """Удаление запроса"""
+    """Удаление книги"""
 
     book = Book.objects.get(id=id)
     if not id:

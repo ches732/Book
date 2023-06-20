@@ -1,32 +1,26 @@
 from typing import OrderedDict
 from rest_framework.exceptions import ValidationError
-from book.models import Author
+from book.models import Author, Book
 
 
-def create_author(author: OrderedDict):
-    """Создание атрибутов автора"""
+def get_all_authors_book(id: int):
+    """Получение авторов по id книги"""
 
-    author = Author.objects.create(
-        first_name=author.get("first_name"),
-        last_name=author.get("last_name"),
-        date_of_birth=author.get("date_of_birth"),
-        date_of_death=author.get("date_of_death")
-    )
-    return author
+    book = Book.objects.get(id=id)
+    authors = book.authors.all()
+    return authors
 
 
-def update_author(author: OrderedDict, id):
-    """Создание  обновление атрибутов автора"""
+def create_author(author: OrderedDict, id: int):
+    """Создание автора по id книги"""
 
-    if not id:
-        raise ValidationError("Автор не может быть обновлен, укажите id")
-    queryset = Author.objects.filter(id=id)
-    queryset.update(**author)
-    return queryset[0]
+    book = Book.objects.get(id=id)
+    authors = book.authors.create(**author)
+    return authors
 
 
 def delete_author(id: int):
-    """Удаление запроса"""
+    """Удаление автора по id"""
 
     author = Author.objects.get(id=id)
     if not id:

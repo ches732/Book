@@ -98,7 +98,7 @@ class BookAPIView(ModelViewSet):
         return Response(AuthorSerializer(authors, many=True).data, status=status.HTTP_200_OK)
 
     def append_authors(self, request: Request, id: int) -> Response:
-        """Создание автора"""
+        """Добавление авторов"""
 
         serializer = AuthorSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -136,7 +136,7 @@ class BookAPIView(ModelViewSet):
         return Response(GenreSerializer(genres, many=True).data, status=status.HTTP_200_OK)
 
     def append_genres(self, request: Request, id: int) -> Response:
-        """Создание жанров"""
+        """Добавление жанров"""
 
         serializer = GenreSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

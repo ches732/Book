@@ -7,24 +7,22 @@ from book.serializers import (
     BookInputSerializer,
     BookSerializer,
     AuthorSerializer,
-    GenreSerializer
-)
-from book.services.authors import (
-    get_all_authors_book,
-    create_author,
-    delete_author
+    GenreSerializer,
+    AuthorIDsSerializer,
+    GenreIDsSerializer
 )
 from book.services.books import (
     create_book,
     get_all_books,
     update_book,
     delete_book,
-    get_filter_book
-)
-from book.services.genres import (
-    delete_genre,
-    create_genre,
-    get_all_genres_book
+    get_all_authors_book,
+    add_author,
+    get_filter_book,
+    delete_author,
+    get_all_genres_book,
+    add_genre,
+    delete_genre
 )
 
 
@@ -34,7 +32,6 @@ class BookAPIView(ModelViewSet):
 
     def create_book(self, request: Request) -> Response:
         """Создание книги"""
-
         serializer = BookInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         book = serializer.validated_data
@@ -42,7 +39,7 @@ class BookAPIView(ModelViewSet):
             book = create_book(book=book)
         except:
             return Response(
-                data={"error": "Ошибка при создании запроса"},
+                data={"error": "Ошибка при создании книги"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer = BookSerializer(book)
@@ -54,14 +51,13 @@ class BookAPIView(ModelViewSet):
         filter_book = get_filter_book(book, request.GET)
         if not book:
             return Response(
-                data={"error": "Объект не найден или не существует"},
+                data={"error": "Книга не найдена или не существует"},
                 status=status.HTTP_404_NOT_FOUND
             )
         return Response(BookSerializer(filter_book, many=True).data, status=status.HTTP_200_OK)
 
     def update_book(self, request: Request, id: int) -> Response:
         """Редактирование книги"""
-
         serializer = BookInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         book = serializer.validated_data
@@ -69,7 +65,7 @@ class BookAPIView(ModelViewSet):
             book = update_book(book=book, id=id)
         except:
             return Response(
-                data={"error": "Объект не может быть обновлен"},
+                data={"error": "Книга не может быть обновлена"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer = BookSerializer(book)
@@ -77,50 +73,51 @@ class BookAPIView(ModelViewSet):
 
     def remove_book(self, request: Request, id: int) -> Response:
         """Удаление книги"""
-
         try:
             delete_book(id)
         except:
             return Response(
-                data={"error": "Объект не может быть удален"},
+                data={"error": "Книга не может быть удалена"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         return Response(status=status.HTTP_200_OK)
 
     def get_authors(self, request: Request, id: int) -> Response:
-        """Получение авторов книги"""
+        """Получение авторов по id книги"""
         authors = get_all_authors_book(id)
         if not authors:
             return Response(
-                data={"error": "Объект не найден или не существует"},
+                data={"error": "Авторы не найдены или не существуют"},
                 status=status.HTTP_404_NOT_FOUND
             )
         return Response(AuthorSerializer(authors, many=True).data, status=status.HTTP_200_OK)
 
     def append_authors(self, request: Request, id: int) -> Response:
-        """Добавление авторов"""
-
-        serializer = AuthorSerializer(data=request.data)
+        """Добавление авторов в книгу"""
+        serializer = AuthorIDsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        author = serializer.validated_data
+        authors_ids = serializer.validated_data
         try:
-            author = create_author(author=author, id=id)
+            book = Book.objects.get(id=id)
+            add_author(book=book, authors_ids=authors_ids)
         except:
             return Response(
-                data={"error": "Ошибка добавлении автора в книгу"},
+                data={"error": "Ошибка добавления авторов в книгу"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        serializer = AuthorSerializer(author)
-        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_201_CREATED)
 
     def remove_authors(self, request: Request, id: int) -> Response:
-        """Удаление автора"""
-
+        """Удаление авторов из книги"""
+        serializer = AuthorIDsSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        authors_ids = serializer.validated_data
         try:
-            delete_author(id)
+            book = Book.objects.get(id=id)
+            delete_author(book=book, authors_ids=authors_ids)
         except:
             return Response(
-                data={"error": "Объект не может быть удален"},
+                data={"error": "Авторы не могут быть удалены"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         return Response(status=status.HTTP_200_OK)
@@ -130,35 +127,38 @@ class BookAPIView(ModelViewSet):
         genres = get_all_genres_book(id)
         if not genres:
             return Response(
-                data={"error": "Объект не найден или не существует"},
+                data={"error": "Жанры не найдены или не существуют"},
                 status=status.HTTP_404_NOT_FOUND
             )
         return Response(GenreSerializer(genres, many=True).data, status=status.HTTP_200_OK)
 
     def append_genres(self, request: Request, id: int) -> Response:
-        """Добавление жанров"""
-
-        serializer = GenreSerializer(data=request.data)
+        """Добавление жанров в книгу"""
+        serializer = GenreIDsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        genre = serializer.validated_data
+        genres_ids = serializer.validated_data
+        print(genres_ids)
         try:
-            genre = create_genre(genre=genre, id=id)
+            book = Book.objects.get(id=id)
+            add_genre(book=book, genres_ids=genres_ids)
         except:
             return Response(
-                data={"error": "Ошибка при создании опроса"},
+                data={"error": "Ошибка при добавлении жанров в книгу"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        serializer = GenreSerializer(genre)
-        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_201_CREATED)
 
     def remove_genres(self, request: Request, id: int) -> Response:
-        """Удаление жанра"""
-
+        """Удаление жанров из книги"""
+        serializer = GenreIDsSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        genres_ids = serializer.validated_data
         try:
-            delete_genre(id)
+            book = Book.objects.get(id=id)
+            delete_genre(book=book, genres_ids=genres_ids)
         except:
             return Response(
-                data={"error": "Объект не может быть удален"},
+                data={"error": "Жанры не могут быть удалены"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         return Response(status=status.HTTP_200_OK)

@@ -1,28 +1,27 @@
 from typing import OrderedDict
-from rest_framework.exceptions import ValidationError
-from book.models import Author, Book
+from book.models import Author
 
 
-def get_all_authors_book(id: int):
-    """Получение авторов по id книги"""
+def retrieve_author(pk: int):
+    """Получение автора по id"""
+    author = Author.objects.get(pk=pk)
+    return author
 
-    book = Book.objects.get(id=id)
-    authors = book.authors.all()
+
+def create_author(author: OrderedDict):
+    """Создание автора"""
+    authors = Author.objects.create(**author)
     return authors
 
 
-def create_author(author: OrderedDict, id: int):
-    """Создание автора по id книги"""
+def update_author(author: OrderedDict, pk: int):
+    """Обновление автора по id"""
+    authors = Author.objects.filter(pk=pk)
+    authors.update(**author)
+    return authors[0]
 
-    book = Book.objects.get(id=id)
-    authors = book.authors.create(**author)
-    return authors
 
-
-def delete_author(id: int):
+def delete_author(pk: int):
     """Удаление автора по id"""
-
-    author = Author.objects.get(id=id)
-    if not id:
-        raise ValidationError("Автор не может быть удален, укажите id")
+    author = Author.objects.filter(pk=pk)
     return author.delete()

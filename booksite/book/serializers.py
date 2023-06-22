@@ -8,10 +8,18 @@ class AuthorSerializer(serializers.ModelSerializer):
         fields = ["first_name", "last_name", "middle_name", "date_of_birth", "date_of_death"]
 
 
+class AuthorIDsSerializer(serializers.Serializer):
+    author_ids = serializers.ListField(child=serializers.IntegerField())
+
+
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = ["name"]
+
+
+class GenreIDsSerializer(serializers.Serializer):
+    genre_ids = serializers.ListField(child=serializers.IntegerField())
 
 
 class BookInputSerializer(serializers.ModelSerializer):

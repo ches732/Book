@@ -1,28 +1,27 @@
 from typing import OrderedDict
-from rest_framework.exceptions import ValidationError
-from book.models import Genre, Book
+from book.models import Genre
 
 
-def get_all_genres_book(id: int):
-    """Получение жанров по id книги"""
-
-    book = Book.objects.get(id=id)
-    genres = book.genres.all()
-    return genres
+def retrieve_genre(pk: int):
+    """Получение жанра по id"""
+    genre = Genre.objects.get(pk=pk)
+    return genre
 
 
-def create_genre(genre: OrderedDict, id: int):
-    """Создание жанров по id книги"""
-
-    book = Book.objects.get(id=id)
-    genres = book.genres.create(**genre)
-    return genres
+def create_genre(genre: OrderedDict):
+    """Создание жанра"""
+    authors = Genre.objects.create(**genre)
+    return authors
 
 
-def delete_genre(id: int):
+def update_genre(genre: OrderedDict, pk: int):
+    """Обновление жанра по id"""
+    genres = Genre.objects.filter(pk=pk)
+    genres.update(**genre)
+    return genres[0]
+
+
+def delete_genre(pk: int):
     """Удаление жанра по id"""
-
-    genre = Genre.objects.get(id=id)
-    if not id:
-        raise ValidationError("Автор не может быть удален, укажите id")
+    genre = Genre.objects.filter(pk=pk)
     return genre.delete()

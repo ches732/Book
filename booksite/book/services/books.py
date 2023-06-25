@@ -25,21 +25,15 @@ def create_book(book: OrderedDict):
 
 def add_authors(book: Book, authors: List[Dict[str, str]]):
     """Создание атрибутов автора"""
-    for key in authors:
-        authors_obj = Author.objects.get_or_create(
-            first_name=key.get("first_name"),
-            last_name=key.get("last_name"),
-            middle_name=key.get("middle_name"),
-            date_of_birth=key.get("date_of_birth"),
-            date_of_death=key.get("date_of_death")
-        )
+    for author in authors:
+        authors_obj = Author.objects.get_or_create(**author)
         book.authors.add(authors_obj[0])
 
 
 def add_genres(book: Book, genres: List[Dict[str, str]]):
     """Создание атрибута жанра"""
-    for key in genres:
-        genres_obj = Genre.objects.get_or_create(name=key.get("name"))
+    for genre in genres:
+        genres_obj = Genre.objects.get_or_create(**genre)
         book.genres.add(genres_obj[0])
 
 
@@ -86,7 +80,7 @@ def get_all_authors_book(id: int):
     return authors
 
 
-def add_author(book: Book, authors_ids):
+def add_author(book: Book, authors_ids: List[int]):
     """Добавление авторов в книгу"""
     authors_ids = authors_ids.get("author_ids")
     for author_id in authors_ids:
@@ -96,7 +90,7 @@ def add_author(book: Book, authors_ids):
             return f'Автор с id {author_id} не найден'
 
 
-def delete_author(book: Book, authors_ids):
+def delete_author(book: Book, authors_ids: List[int]):
     """Удаление авторов из книги"""
     authors_ids = authors_ids.get("author_ids")
     for author_id in authors_ids:
@@ -113,7 +107,7 @@ def get_all_genres_book(id: int):
     return genres
 
 
-def add_genre(book: Book, genres_ids):
+def add_genre(book: Book, genres_ids: List[int]):
     """Добавление жанров в книгу"""
     genres_ids = genres_ids.get("genre_ids")
     for genre_id in genres_ids:
@@ -123,7 +117,7 @@ def add_genre(book: Book, genres_ids):
             return f'Жанр с id {genre_id} не найден'
 
 
-def delete_genre(book: Book, genres_ids):
+def delete_genre(book: Book, genres_ids: List[int]):
     """Удаление жанров из книги"""
     genres_ids = genres_ids.get("genre_ids")
     for genre_id in genres_ids:

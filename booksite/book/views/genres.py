@@ -14,13 +14,13 @@ class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs) -> Response:
         """Получение списка жанров книг"""
         queryset = self.get_queryset()
         serializer = GenreSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    def create(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs) -> Response:
         """Создание жанра"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -28,13 +28,13 @@ class GenreViewSet(viewsets.ModelViewSet):
         serializer = GenreSerializer(authors)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def retrieve(self, request, *args, **kwargs):
+    def retrieve(self, request, *args, **kwargs) -> Response:
         """Получение жанров по id"""
         genres = retrieve_genre(**kwargs)
         serializer = self.get_serializer(genres)
         return Response(serializer.data)
 
-    def update(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs) -> Response:
         """Обновление жанров по id"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -42,7 +42,7 @@ class GenreViewSet(viewsets.ModelViewSet):
         serializer = GenreSerializer(authors)
         return Response(serializer.data)
 
-    def destroy(self, request, *args, **kwargs):
+    def destroy(self, request, *args, **kwargs) -> Response:
         """Удаление жанров по id"""
         delete_genre(**kwargs)
         return Response(status=status.HTTP_204_NO_CONTENT)

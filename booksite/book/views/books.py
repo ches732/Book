@@ -34,9 +34,8 @@ class BookAPIView(ModelViewSet):
         """Создание книги"""
         serializer = BookInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        book = serializer.validated_data
         try:
-            book = create_book(book=book)
+            book = create_book(book=serializer.validated_data)
         except:
             return Response(
                 data={"error": "Ошибка при создании книги"},
@@ -60,9 +59,8 @@ class BookAPIView(ModelViewSet):
         """Редактирование книги"""
         serializer = BookInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        book = serializer.validated_data
         try:
-            book = update_book(book=book, id=id)
+            book = update_book(book=serializer.validated_data, id=id)
         except:
             return Response(
                 data={"error": "Книга не может быть обновлена"},
@@ -96,10 +94,9 @@ class BookAPIView(ModelViewSet):
         """Добавление авторов в книгу"""
         serializer = AuthorIDsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        authors_ids = serializer.validated_data
         try:
             book = Book.objects.get(id=id)
-            add_author(book=book, authors_ids=authors_ids)
+            add_author(book=book, authors_ids=serializer.validated_data)
         except:
             return Response(
                 data={"error": "Ошибка добавления авторов в книгу"},
@@ -111,10 +108,9 @@ class BookAPIView(ModelViewSet):
         """Удаление авторов из книги"""
         serializer = AuthorIDsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        authors_ids = serializer.validated_data
         try:
             book = Book.objects.get(id=id)
-            delete_author(book=book, authors_ids=authors_ids)
+            delete_author(book=book, authors_ids=serializer.validated_data)
         except:
             return Response(
                 data={"error": "Авторы не могут быть удалены"},
@@ -136,11 +132,9 @@ class BookAPIView(ModelViewSet):
         """Добавление жанров в книгу"""
         serializer = GenreIDsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        genres_ids = serializer.validated_data
-        print(genres_ids)
         try:
             book = Book.objects.get(id=id)
-            add_genre(book=book, genres_ids=genres_ids)
+            add_genre(book=book, genres_ids=serializer.validated_data)
         except:
             return Response(
                 data={"error": "Ошибка при добавлении жанров в книгу"},
@@ -152,10 +146,9 @@ class BookAPIView(ModelViewSet):
         """Удаление жанров из книги"""
         serializer = GenreIDsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        genres_ids = serializer.validated_data
         try:
             book = Book.objects.get(id=id)
-            delete_genre(book=book, genres_ids=genres_ids)
+            delete_genre(book=book, genres_ids=serializer.validated_data)
         except:
             return Response(
                 data={"error": "Жанры не могут быть удалены"},
